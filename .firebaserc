@@ -1,13 +1,5 @@
 {
   "projects": {
     "default": "walkie-talkie-bfbb0"
-  },
-  "hosting": {
-    "public": "dist",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ]
   }
 }

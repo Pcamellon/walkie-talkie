@@ -12,11 +12,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: actions/setup-node@master
-      - name: Installing project dependencies
-      - run: yarn
-      - name: Building the project
-      - run: yarn build
+      # - uses: actions/setup-node@master
+      # - name: Installing project dependencies and Building the project
+      - run: yarn && yarn build
 
       # - uses: w9jds/firebase-action@master
       #   with:
@@ -26,7 +24,7 @@ jobs:
 
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_WALKIE_TALKIE_BFBB0 }}'
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_WALKIE_TALKIE_BFBB0 }}"
           channelId: live
           projectId: walkie-talkie-bfbb0
