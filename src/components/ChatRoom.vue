@@ -9,44 +9,46 @@
       <code>https://your-url.com/#/chats/{{ chatId }}</code>
     </p>
 
-    <User #user="{ user }">
-      <div v-if="user">
-        <ul>
-          <li v-for="message of messages" :key="message.id">
-            <ChatMessage
-              :message="message"
-              :owner="user.uid === message.sender"
-            />
-          </li>
-        </ul>
+    <User>
+      <template v-slot:user="{ user }">
+        <div v-if="user">
+          <ul>
+            <li v-for="message of messages" :key="message.id">
+              <ChatMessage
+                :message="message"
+                :owner="user.uid === message.sender"
+              />
+            </li>
+          </ul>
 
-        <hr />
-        <h5>Record Audio</h5>
+          <hr />
+          <h5>Record Audio</h5>
 
-        <button v-if="!recorder" @click="record()" class="button is-info">
-          Record Voice
-        </button>
-        <button v-else @click="stop()" class="button is-danger">Stop</button>
+          <button v-if="!recorder" @click="record()" class="button is-info">
+            Record Voice
+          </button>
+          <button v-else @click="stop()" class="button is-danger">Stop</button>
 
-        <br />
+          <br />
 
-        <audio v-if="newAudio" :src="newAudioURL" controls></audio>
+          <audio v-if="newAudio" :src="newAudioURL" controls></audio>
 
-        <hr />
+          <hr />
 
-        <input v-model="newMessageText" class="input" />
+          <input v-model="newMessageText" class="input" />
 
-        <button
-          :disabled="(!newMessageText && !newAudio) || loading"
-          class="button is-success"
-          type="text"
-          @click="addMessage(user.uid)"
-        >
-          Send
-        </button>
-      </div>
+          <button
+            :disabled="(!newMessageText && !newAudio) || loading"
+            class="button is-success"
+            type="text"
+            @click="addMessage(user.uid)"
+          >
+            Send
+          </button>
+        </div>
 
-      <Login v-else />
+        <Login v-else />
+      </template>
     </User>
   </main>
 </template>

@@ -16,6 +16,7 @@ Vue.config.productionTip = false
 
 import Home from './components/Home'
 import ChatRoom from './components/ChatRoom'
+import vuetify from './plugins/vuetify'
 
 const router = new VueRouter({
   routes: [
@@ -26,5 +27,6 @@ const router = new VueRouter({
 
 new Vue({
   router,
-  render: h => h(App),
+  vuetify,
+  render: h => h(App)
 }).$mount('#app')
