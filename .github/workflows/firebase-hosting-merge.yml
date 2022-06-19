@@ -2,7 +2,7 @@
 # https://github.com/firebase/firebase-tools
 
 name: Deploy to Firebase Hosting on merge
-'on':
+"on":
   push:
     branches:
       - main
@@ -11,6 +11,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@master
+      - name: Installing project dependencies
+      - run: yarn
+      - name: Building the project
+      - run: yarn build
+
+      # - uses: w9jds/firebase-action@master
+      #   with:
+      #     args: deploy --only hosting
+      #   env:
+      #     FIREBASE_TOKEN: ${{ secrets.FirebaseDeploy }}
+
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
