@@ -4,10 +4,13 @@ import { firestorePlugin } from 'vuefire'
 import VueRouter from 'vue-router'
 
 import VueCompositionApi from '@vue/composition-api'
-Vue.use(VueCompositionApi)
 
+Vue.use(VueCompositionApi)
 Vue.use(VueRouter)
 Vue.use(firestorePlugin)
+
+// Dates formatter
+Vue.use(require('vue-moment'));
 
 Vue.config.productionTip = false
 

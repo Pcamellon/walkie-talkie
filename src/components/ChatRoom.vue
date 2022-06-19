@@ -92,31 +92,90 @@ export default {
     async addMessage(uid) {
       this.loading = true;
 
-      let audioURL = null;
-
       const { id: messageId } = this.messagesCollection.doc();
 
-      if (this.newAudio) {
-        const storageRef = storage
-          .ref("chats")
-          .child(this.chatId)
-          .child(`${messageId}.wav`);
+      // Just Txt
+      if (!this.newAudio) {
+        await this.messagesCollection.doc(messageId).set({
+          text: this.newMessageText,
+          sender: uid,
+          createdAt: Date.now(),
+        });
 
-        await storageRef.put(this.newAudio);
-
-        audioURL = await storageRef.getDownloadURL();
+        this.loading = false;
+        this.newMessageText = "";
       }
 
-      await this.messagesCollection.doc(messageId).set({
-        text: this.newMessageText,
-        sender: uid,
-        createdAt: Date.now(),
-        audioURL,
-      });
+      console.log(`this.newAudio ${this.newAudio}`);
 
-      this.loading = false;
-      this.newMessageText = "";
-      this.newAudio = null;
+      // Create the file metadata
+      const metadata = {
+        contentType: "audio/wav",
+      };
+
+      // Upload file and metadata to the object 'images/mountains.jpg'
+      const uploadTask = storage
+        .ref("chats")
+        .child(this.chatId)
+        .child(`${messageId}.wav`)
+        .put(this.newAudio, metadata);
+
+      // Listen for state changes, errors, and completion of the upload.
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+          let progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+
+          console.log("Upload is " + progress + "% done");
+
+          switch (snapshot.state) {
+            case "paused":
+              console.log("Upload is paused");
+              break;
+            case "running":
+              console.log("Upload is running");
+              break;
+          }
+        },
+        (error) => {
+          console.log(error);
+
+          switch (error.code) {
+            case "storage/unauthorized":
+              // User doesn't have permission to access the object
+              break;
+            case "storage/canceled":
+              // User canceled the upload
+              break;
+
+            // ...
+
+            case "storage/unknown":
+              // Unknown error occurred, inspect error.serverResponse
+              console.log(error.serverResponse);
+              break;
+          }
+        },
+        () => {
+          // Upload completed successfully, now we can get the download URL
+          uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+            // console.log("File available at", downloadURL);
+
+            this.messagesCollection.doc(messageId).set({
+              text: "",
+              sender: uid,
+              createdAt: Date.now(),
+              audioURL: downloadURL,
+            });
+
+            this.loading = false;
+            this.newMessageText = "";
+            this.newAudio = null;
+          });
+        }
+      );
     },
     async record() {
       this.newAudio = null;
@@ -139,9 +198,14 @@ export default {
       this.recorder.addEventListener("stop", () => {
         this.newAudio = new Blob(recordedChunks);
         console.log(this.newAudio);
+
+        // TODO  Upload
       });
 
       this.recorder.start();
+
+      // const newAudioURL = URL.createObjectURL(this.newAudio);
+      // console.log(this.newAudio);
     },
     async stop() {
       this.recorder.stop();

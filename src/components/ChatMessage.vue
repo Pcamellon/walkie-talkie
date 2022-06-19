@@ -1,18 +1,21 @@
 <template>
   <div class="message" :class="{ 'from-user': owner }">
-    {{ message.text }}
+    <span class="sender">{{ message.sender }}</span>
+    <br />
+    
+    <p v-if="message.text">{{ message.text }}</p>
     <br />
 
     <audio v-if="message.audioURL" :src="message.audioURL" controls></audio>
     <br />
 
-    <span class="sender">from UID {{ message.sender }}</span>
+    <span>{{ message.createdAt | moment("from", "now") }}</span>
   </div>
 </template>
 
 <script>
 export default {
-    props: ['message', 'owner']
+  props: ["message", "owner"],
 };
 </script>
 <style>
